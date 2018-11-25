@@ -1,0 +1,6 @@
+[package]
+name = "RustSample"
+version = "0.1.0"
+authors = ["luiz <luiz@lags.pro.br>"]
+
+[dependencies]
