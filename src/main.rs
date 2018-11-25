@@ -393,7 +393,13 @@ fn methods() {
     let p = Point4 { x: 3.0, y: 4.0};
     let p2 = Point4 {x: 5.0, y: 10.0};
     let my_line = Line4 {start: p, end: p2};
-    println!("myLine.len() = {}", myLine.len() );
+    println!("myLine.len() = {}", my_line.len() );
+}
+
+fn closures() {
+    let plus_one = |x:i32| -> i32 { x + 1};
+    let a = 6;
+    println!("{} + 1 = {}",a, plus_one(a) );
 }
 fn main() {
     //typefun();
@@ -413,5 +419,6 @@ fn main() {
    //pattern_matching() ;
   // generics();
   //functions();
-  methods();
+  //methods();
+  closures();
 }
