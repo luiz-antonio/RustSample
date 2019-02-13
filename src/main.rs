@@ -581,7 +581,47 @@ fn dynamic_dispatch() {
     //println!("b={}",b.format() )
     print_it_dyn(&b);
 }
+//
+struct Circle {radius: f64}
+struct Square {side: f64}
+trait Shape {
+    fn area(&self) -> f64;
+}
+impl Shape for Square{
+    fn area(&self) -> f64 {
+        self.side * self.side
+    }
+}
+impl Shape for Circle{
+    fn area(&self) -> f64
+    {
+        self.radius * self.radius * std::f64::consts::PI
+    }
+}
+fn only_way_is_dyn_dispatch() {
+    let shapes:[&Shape; 4] = [
+        &Circle{radius: 1.0},
+        &Square{side: 3.0},
+        &Circle{radius: 2.0},
+        &Square{side: 4.0}
+    ];
+    for (i, shape) in shapes.iter().enumerate() {
+        println!("Shape #{} has area {}",i, shape.area() );
+    }
+}
+//
+struct Person {
+    name: String
+}
+struct Company<'z> {
+    name: String,
+    ceo: &'z Person
+}
+fn lifetime() {
+    let boss = Person {name: String::from("Elon Musk")};
+    let tesla = Company {name: String::from("Tesla"), ceo: &boss};
 
+}
 fn main() {
     //typefun();
     //if_statement();
@@ -606,5 +646,7 @@ fn main() {
     //traits();
     //overloading();
     //static_dispatch();
-    dynamic_dispatch()
+    //dynamic_dispatch();
+    //only_way_is_dyn_dispatch();
+    lifetime();
 }
