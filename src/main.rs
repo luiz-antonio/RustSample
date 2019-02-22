@@ -622,6 +622,87 @@ fn lifetime() {
     let tesla = Company {name: String::from("Tesla"), ceo: &boss};
 
 }
+//
+use std::rc::Rc;
+struct Person_rc{
+    name: Rc<String>
+}
+impl Person_rc {
+    fn new(name: Rc<String>) -> Person_rc {
+        Person_rc {name: name}
+    }
+    fn greet(&self) {
+        println!(" Hi my name is {}", self.name )
+    }
+}
+fn ref_counter() {
+    let name = Rc::new("John".to_string());
+    println!("Name {}, name has {} strong pointers",name, Rc::strong_count(&name) );
+    {
+        let person = Person_rc::new(name.clone());
+        println!("Name {}, name has {} strong pointers",name, Rc::strong_count(&name) );
+        person.greet();
+    }
+    println!("Name {}, name has {} strong pointers",name, Rc::strong_count(&name) );
+    println!("Name = {}",name );
+}
+
+// Arc
+struct Person_arc{
+    name: Arc<String>
+}
+impl Person_arc {
+    fn new(name: Arc<String>) -> Person_arc {
+        Person_arc {name: name}
+    }
+    fn greet(&self) {
+        println!(" Hi my name is {}", self.name )
+    }
+}
+use std::sync::{Mutex, Arc};
+use std::thread;
+fn atomic_ref_counter() {
+    let name = Arc::new("John".to_string());
+    let person = Person_arc::new(name.clone());
+    let t = thread::spawn(move || {
+        person.greet();
+    });
+    println!("Name : {}", name);
+    t.join().unwrap();
+}
+
+// Mutex
+struct Person_mut {
+    name: Arc<String>,
+    state: Arc<Mutex<String>>
+}
+impl Person_mut {
+    fn new(name: Arc<String>, state: Arc<Mutex<String>>) -> Person_mut {
+        Person_mut {name: name, state: state}
+    }
+    fn greet(&self) {
+        let mut state = self.state.lock().unwrap();
+        state.clear();
+        state.push_str("excited");
+
+        println!(" Hi my name is {} and I am {}.", self.name, self.state.lock().unwrap().as_str() );
+        
+    }
+}
+fn mutex_demo() {
+    let name = Arc::new("John".to_string());
+    let state = Arc::new(Mutex::new("bored".to_string()));
+
+    let person = Person_mut::new(name.clone(), state.clone());
+
+    let t = thread::spawn( move | | {
+        person.greet()
+    });
+
+    println!("Name = {}, state = {}", name, state.lock().unwrap().as_str() );
+    t.join().unwrap();
+}
+
 fn main() {
     //typefun();
     //if_statement();
@@ -648,5 +729,8 @@ fn main() {
     //static_dispatch();
     //dynamic_dispatch();
     //only_way_is_dyn_dispatch();
-    lifetime();
+    //lifetime();
+    //ref_counter();
+    //atomic_ref_counter();
+    mutex_demo();
 }
